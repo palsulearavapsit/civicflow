@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Validation helpers
+    function isValidProfile() {
+      let data = request.resource.data;
+      return data.uid == request.auth.uid 
+        && data.keys().hasAll(['email', 'displayName', 'onboarded'])
+        && (data.role == 'user' || data.role == 'admin');
+    }
+
+    function isValidChecklist() {
+      let data = request.resource.data;
+      return data.uid == request.auth.uid
+        && data.keys().hasAll(['taskId', 'completed', 'updatedAt']);
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isSignedIn() && isValidProfile();
+      allow update: if (isOwner(userId) && request.resource.data.role == resource.data.role) || isAdmin();
+    }
+
+    // Election rules (Read-only for users, Admin write)
+    match /election_rules/{ruleId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // User checklists
+    match /user_checklists/{checkId} {
+      allow read: if isOwner(resource.data.uid);
+      allow create, update: if isSignedIn() && isValidChecklist();
+      allow delete: if isOwner(resource.data.uid);
+    }
+
+    // FAQs, Myths/Facts (Public read, Admin write)
+    match /faq/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /myths_facts/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
