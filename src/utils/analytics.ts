@@ -1,7 +1,13 @@
 // Simple Analytics Utility for Firebase/GA4
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
 export const logEvent = (eventName: string, params?: object) => {
-  if (typeof window !== "undefined" && (window as any).gtag) {
-    (window as any).gtag("event", eventName, params);
+  if (typeof window !== "undefined" && window.gtag) {
+    window.gtag("event", eventName, params);
   }
   console.log(`[Analytics Event]: ${eventName}`, params);
 };

@@ -119,7 +119,7 @@ export default function OnboardingPage() {
                       {['18-24', '25-44', '45-64', '65+'].map(age => (
                         <button
                           key={age}
-                          onClick={() => setFormData({...formData, ageGroup: age as any})}
+                          onClick={() => setFormData({...formData, ageGroup: age as '18-24' | '25-44' | '45-64' | '65+'})}
                           className={`p-3 rounded-xl border text-sm font-medium transition-all ${formData.ageGroup === age ? 'bg-blue-600 text-white border-blue-600' : 'bg-transparent border-slate-200 dark:border-slate-700 hover:border-blue-400 text-slate-900 dark:text-slate-100'}`}
                         >
                           {age}
@@ -136,7 +136,7 @@ export default function OnboardingPage() {
                     />
                     <div>
                       <p className="font-semibold text-slate-900 dark:text-white text-sm">I am a first-time voter</p>
-                      <p className="text-xs text-slate-500">We'll give you extra guidance on the basics.</p>
+                      <p className="text-xs text-slate-500">We&apos;ll give you extra guidance on the basics.</p>
                     </div>
                   </label>
                 </div>
@@ -154,7 +154,7 @@ export default function OnboardingPage() {
                   ].map(method => (
                     <button
                       key={method.id}
-                      onClick={() => setFormData({...formData, preferredMethod: method.id as any})}
+                      onClick={() => setFormData({...formData, preferredMethod: method.id as 'in-person' | 'early' | 'mail'})}
                       className={`flex flex-col items-start p-4 rounded-2xl border transition-all ${formData.preferredMethod === method.id ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-600' : 'bg-transparent border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100'}`}
                     >
                       <span className="font-bold text-slate-900 dark:text-white">{method.title}</span>
@@ -170,8 +170,8 @@ export default function OnboardingPage() {
                 <div className="mx-auto w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-full flex items-center justify-center">
                   <CheckCircle2 size={48} />
                 </div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white">You're all set!</h1>
-                <p className="text-slate-500">We've generated a personalized election plan just for you based on your location and preferences.</p>
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white">You&apos;re all set!</h1>
+                <p className="text-slate-500">We&apos;ve generated a personalized election plan just for you based on your location and preferences.</p>
               </div>
             )}
           </motion.div>

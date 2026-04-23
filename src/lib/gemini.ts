@@ -14,7 +14,7 @@ export const model = genAI.getGenerativeModel({
   5. If data for a specific location is missing, direct the user to vote.gov.`,
 });
 
-export async function getGeminiResponse(prompt: string, history: any[] = []) {
+export async function getGeminiResponse(prompt: string, history: { role: string; parts: { text: string }[] }[] = []) {
   // Simulate RAG: Inject grounded context about current election rules
   const groundedContext = `
     CURRENT ELECTION CONTEXT (Verified):

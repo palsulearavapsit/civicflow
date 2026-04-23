@@ -29,7 +29,7 @@ export const UserService = {
     await this.logAudit(uid, "PROFILE_UPDATED", data);
   },
 
-  async logAudit(uid: string, action: string, metadata: any = {}): Promise<void> {
+  async logAudit(uid: string, action: string, metadata: Record<string, unknown> = {}): Promise<void> {
     if (!db) return;
     try {
       const auditRef = collection(db, "audit_logs");

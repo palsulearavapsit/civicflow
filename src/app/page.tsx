@@ -41,7 +41,7 @@ export default function LandingPage() {
         {['en', 'es', 'hi', 'mr'].map((lang) => (
           <button 
             key={lang}
-            onClick={() => setLanguage(lang as any)}
+            onClick={() => setLanguage(lang as 'en' | 'es' | 'hi' | 'mr')}
             className={cn(
               "px-3 py-1 rounded-full text-[10px] font-black tracking-widest transition-all uppercase", 
               language === lang 

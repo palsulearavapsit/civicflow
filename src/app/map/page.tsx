@@ -36,6 +36,33 @@ const mapOptions = {
   ],
 };
 
+const mockStations: PollingStation[] = [
+  { 
+    id: "1", 
+    name: "City Hall Community Center", 
+    location: { lat: 34.0522, lng: -118.2437 }, 
+    address: "200 N Spring St, Los Angeles, CA", 
+    hours: "7 AM - 8 PM", 
+    accessibility: ["Wheelchair", "ASL"] 
+  },
+  { 
+    id: "2", 
+    name: "Westside Library", 
+    location: { lat: 34.045, lng: -118.25 }, 
+    address: "555 W 5th St, Los Angeles, CA", 
+    hours: "7 AM - 8 PM", 
+    accessibility: ["Wheelchair"] 
+  },
+  ...Array.from({ length: 50 }, (_, i) => ({
+    id: `mock-${i}`,
+    name: `Poll Station ${i + 3}`,
+    location: { lat: 34.05 + (i * 0.001), lng: -118.25 + (i * 0.001) }, // Stable location
+    address: `${100 + i} Main St, Los Angeles, CA`,
+    hours: "7 AM - 8 PM",
+    accessibility: ["Wheelchair"]
+  }))
+];
+
 export default function PollingMapPage() {
   const { profile } = useAuth();
   const [selectedStation, setSelectedStation] = useState<PollingStation | null>(null);
@@ -46,33 +73,7 @@ export default function PollingMapPage() {
     googleMapsApiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
   });
 
-  const stations: PollingStation[] = useMemo(() => [
-    { 
-      id: "1", 
-      name: "City Hall Community Center", 
-      location: { lat: 34.0522, lng: -118.2437 }, 
-      address: "200 N Spring St, Los Angeles, CA", 
-      hours: "7 AM - 8 PM", 
-      accessibility: ["Wheelchair", "ASL"] 
-    },
-    { 
-      id: "2", 
-      name: "Westside Library", 
-      location: { lat: 34.045, lng: -118.25 }, 
-      address: "555 W 5th St, Los Angeles, CA", 
-      hours: "7 AM - 8 PM", 
-      accessibility: ["Wheelchair"] 
-    },
-    // Adding more mock data to demonstrate virtualization
-    ...Array.from({ length: 50 }, (_, i) => ({
-      id: `mock-${i}`,
-      name: `Poll Station ${i + 3}`,
-      location: { lat: 34.05 + Math.random() * 0.1, lng: -118.25 + Math.random() * 0.1 },
-      address: `${100 + i} Main St, Los Angeles, CA`,
-      hours: "7 AM - 8 PM",
-      accessibility: ["Wheelchair"]
-    }))
-  ], []);
+  const stations = mockStations;
 
   const filteredStations = useMemo(() => 
     stations.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase())),
@@ -157,7 +158,7 @@ export default function PollingMapPage() {
             mapContainerStyle={containerStyle}
             center={selectedStation ? selectedStation.location : { lat: 34.0522, lng: -118.2437 }}
             zoom={13}
-            options={mapOptions as any}
+            options={mapOptions as google.maps.MapOptions}
           >
             {filteredStations.map((station) => (
               <Marker

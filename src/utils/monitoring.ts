@@ -1,5 +1,5 @@
 export const CloudMonitoring = {
-  logError: (error: Error, metadata: any = {}) => {
+  logError: (error: Error, metadata: Record<string, unknown> = {}) => {
     // In production, this would send to Google Cloud Error Reporting
     console.group("☁️ [Cloud Monitoring] Error Reported");
     console.error("Message:", error.message);
@@ -17,7 +17,7 @@ export const CloudMonitoring = {
     */
   },
   
-  logEvent: (name: string, params: any = {}) => {
+  logEvent: (name: string, params: Record<string, unknown> = {}) => {
     // Analytics/Event logging
     console.log(`📊 [Analytics] ${name}`, params);
   }

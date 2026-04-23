@@ -17,7 +17,7 @@ export function Card({ children, className, role }: { children: React.ReactNode;
   );
 }
 
-export function MotionCard({ children, className, ...props }: any) {
+export function MotionCard({ children, className, ...props }: React.ComponentPropsWithoutRef<typeof motion.div>) {
   const shouldReduceMotion = useReducedMotion();
   
   return (

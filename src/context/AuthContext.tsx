@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // If no auth is available, we are in demo mode
     if (!auth) {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 0);
       return;
     }
 
