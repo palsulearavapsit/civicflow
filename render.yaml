@@ -1,0 +1,29 @@
+services:
+  # Next.js Frontend Service
+  - type: web
+    name: civicflow-app
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NEXT_PUBLIC_FIREBASE_API_KEY
+        fromEnvVar: NEXT_PUBLIC_FIREBASE_API_KEY
+      - key: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+        fromEnvVar: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+      - key: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+        fromEnvVar: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+      - key: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+        fromEnvVar: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+      - key: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+        fromEnvVar: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+      - key: NEXT_PUBLIC_FIREBASE_APP_ID
+        fromEnvVar: NEXT_PUBLIC_FIREBASE_APP_ID
+      - key: GEMINI_API_KEY
+        fromEnvVar: GEMINI_API_KEY
+
+  # Optional: Redis for rate limiting or caching if needed in the future
+  # - type: redis
+  #   name: civicflow-cache
+  #   ipAllowList: [] # Only allow internal connections

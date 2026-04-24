@@ -29,7 +29,7 @@ export default function Error({
         <div className="space-y-3">
           <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Something went wrong</h1>
           <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
-            We encountered an unexpected error. Don't worry, your election data is safe.
+            We encountered an unexpected error. Don&apos;t worry, your election data is safe.
           </p>
         </div>
 

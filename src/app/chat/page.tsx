@@ -175,6 +175,3 @@ export default function CopilotChat() {
     </div>
   );
 }
-    </div>
-  );
-}

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Card, Badge, Button, cn } from "@/components/ui";
 import { CheckCircle2, Circle, AlertCircle, FileText, Info, ShieldCheck, ChevronLeft } from "lucide-react";
-import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function EligibilityChecker() {
@@ -32,7 +31,7 @@ export default function EligibilityChecker() {
           </Link>
           <div className="text-center w-full space-y-2">
             <h1 className="text-4xl font-black tracking-tight">Eligibility Checker</h1>
-            <p className="text-slate-500">Interactive checklist to ensure you're ready for the ballot.</p>
+            <p className="text-slate-500">Interactive checklist to ensure you&apos;re ready for the ballot.</p>
           </div>
         </div>
 
@@ -94,7 +93,7 @@ export default function EligibilityChecker() {
               <div>
                 <h3 className="font-bold text-red-900 dark:text-red-400">Risk Detected: Missing Requirements</h3>
                 <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                  You haven't confirmed your registration. You have 12 days left to register in {profile?.location.state || 'your state'}.
+                  You haven&apos;t confirmed your registration. You have 12 days left to register in {profile?.location.state || "your state"}.
                 </p>
                 <Button className="mt-4 bg-red-600 text-white hover:bg-red-700">Register Online Now</Button>
               </div>
