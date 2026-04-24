@@ -2,7 +2,8 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from "@react-google-maps/api";
-import { FixedSizeList as List } from "react-window";
+import * as ReactWindow from "react-window";
+const List = (ReactWindow as any).FixedSizeList || (ReactWindow as any).default?.FixedSizeList;
 import { Card, Button, cn, MotionCard } from "@/components/ui";
 import { MapPin, Navigation, Clock, Search, ChevronLeft, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";

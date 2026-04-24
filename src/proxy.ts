@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/request';
+import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const response = NextResponse.next();
 
   // Extract geo-location from headers (provided by hosting like Vercel)
-  const country = request.geo?.country || 'US';
-  const city = request.geo?.city || 'Unknown';
-  const region = request.geo?.region || 'Unknown';
+  const country = (request as any).geo?.country || 'US';
+  const city = (request as any).geo?.city || 'Unknown';
+  const region = (request as any).geo?.region || 'Unknown';
 
   // Set a custom header for the app to consume
   response.headers.set('x-civicflow-geo-country', country);

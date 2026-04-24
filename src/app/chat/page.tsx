@@ -52,7 +52,7 @@ export default function CopilotChat() {
     try {
       // Format history for Gemini
       const history = messages.map(msg => ({
-        role: msg.role === 'user' ? 'user' : 'model' as const,
+        role: (msg.role === 'user' ? 'user' : 'model') as "user" | "model",
         parts: [{ text: msg.content }]
       }));
 
