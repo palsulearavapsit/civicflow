@@ -1,0 +1,21 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`UI Component Snapshots > Badge should match snapshot 1`] = `
+<DocumentFragment>
+  <span
+    class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+  >
+    Danger
+  </span>
+</DocumentFragment>
+`;
+
+exports[`UI Component Snapshots > Button should match snapshot 1`] = `
+<DocumentFragment>
+  <button
+    class="px-6 py-2.5 rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:focus-visible:ring-offset-slate-950"
+  >
+    Click Me
+  </button>
+</DocumentFragment>
+`;

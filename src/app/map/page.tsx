@@ -2,8 +2,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from "@react-google-maps/api";
-import * as ReactWindow from "react-window";
-const List = (ReactWindow as any).FixedSizeList || (ReactWindow as any).default?.FixedSizeList;
+import { List } from "react-window";
 import { Card, Button, cn, MotionCard } from "@/components/ui";
 import { MapPin, Navigation, Clock, Search, ChevronLeft, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -81,7 +80,7 @@ export default function PollingMapPage() {
     [stations, searchTerm]
   );
 
-  const StationRow = useCallback(({ index, style }: { index: number; style: React.CSSProperties }) => {
+  const StationRow = useCallback(({ index, style }: any) => {
     const station = filteredStations[index];
     const isSelected = selectedStation?.id === station.id;
 
@@ -138,13 +137,12 @@ export default function PollingMapPage() {
         
         <div className="flex-1 min-h-0 py-4">
           <List
-            height={600} // This should ideally be dynamic
-            itemCount={filteredStations.length}
-            itemSize={100}
-            width="100%"
-          >
-            {StationRow}
-          </List>
+            style={{ height: 600, width: "100%" }}
+            rowCount={filteredStations.length}
+            rowHeight={100}
+            rowComponent={StationRow}
+            rowProps={{}}
+          />
         </div>
       </aside>
 
