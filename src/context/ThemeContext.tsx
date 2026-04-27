@@ -21,11 +21,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // 1. Detect System Reduced Motion
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setReducedMotion(motionQuery.matches);
     
     const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     motionQuery.addEventListener("change", handler);
     return () => motionQuery.removeEventListener("change", handler);
+
   }, []);
 
   const value = useMemo(() => ({

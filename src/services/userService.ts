@@ -29,7 +29,8 @@ export const UserService = {
     await this.logAudit(uid, "PROFILE_UPDATED", data);
   },
 
-  async logAIInteraction(uid: string, prompt: string, response: string, metadata: any = {}): Promise<void> {
+  async logAIInteraction(uid: string, prompt: string, response: string, metadata: Record<string, unknown> = {}): Promise<void> {
+
     if (!db) return;
     try {
       const chatLogsRef = collection(db, "ai_interactions");

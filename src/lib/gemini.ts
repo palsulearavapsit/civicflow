@@ -1,4 +1,5 @@
-import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType, Content } from "@google/generative-ai";
+
 
 const apiKey = process.env.GEMINI_API_KEY || "";
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -53,7 +54,7 @@ export const model = genAI.getGenerativeModel({
 /**
  * Enhanced Gemini response with history and streaming support
  */
-export async function* getGeminiStream(prompt: string, history: any[] = []) {
+export async function* getGeminiStream(prompt: string, history: Content[] = []) {
   const groundedContext = `
     VERIFIED ELECTION DATA (April 2026):
     - CA: Online reg deadline April 20. Mail-in must be postmarked by April 20.
@@ -77,7 +78,7 @@ export async function* getGeminiStream(prompt: string, history: any[] = []) {
 /**
  * Legacy support for non-streaming calls
  */
-export async function getGeminiResponse(prompt: string, history: any[] = []) {
+export async function getGeminiResponse(prompt: string, history: Content[] = []) {
   const chat = model.startChat({ history });
   const result = await chat.sendMessage(prompt);
   const response = await result.response;

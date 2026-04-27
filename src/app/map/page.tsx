@@ -66,12 +66,21 @@ const mockStations: PollingStation[] = [
   }))
 ];
 
+interface StationRowProps {
+  index: number;
+  style: React.CSSProperties;
+  filteredStations: PollingStation[];
+  selectedStation: PollingStation | null;
+  setSelectedStation: (s: PollingStation) => void;
+}
+
 /**
  * Optimized row component for the virtualized station list.
  * Memoized to prevent re-renders when map state changes.
  */
-const StationRow = React.memo(({ index, style, ...data }: any) => {
-  const { filteredStations, selectedStation, setSelectedStation } = data;
+const StationRow = React.memo(({ index, style, ...data }: { index: number, style: React.CSSProperties }) => {
+  const { filteredStations, selectedStation, setSelectedStation } = data as unknown as StationRowProps;
+
   const station = filteredStations[index];
   const isSelected = selectedStation?.id === station.id;
 
@@ -151,7 +160,9 @@ export default function PollingMapPage() {
           <List
             rowCount={filteredStations.length}
             rowHeight={100}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             rowComponent={StationRow as any}
+
             rowProps={{
               filteredStations,
               selectedStation,

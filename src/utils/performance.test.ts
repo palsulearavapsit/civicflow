@@ -14,8 +14,14 @@ describe('Performance: generatePlan', () => {
         ageGroup: '25-44',
         preferredMethod: 'in-person',
         language: 'en',
-        accessibilityNeeds: []
-      } as any);
+        accessibilityNeeds: [],
+        email: 'test@example.com',
+
+        displayName: 'Test User',
+        isFirstTimeVoter: false,
+        lastUpdated: new Date()
+      });
+
     }
     
     const end = performance.now();

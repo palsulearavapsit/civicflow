@@ -21,7 +21,10 @@ export const UserProfileSchema = z.object({
   accessibilityNeeds: z.array(z.string()).default([]),
   lastUpdated: z.preprocess((arg) => {
     if (typeof arg === "string" || arg instanceof Date) return new Date(arg);
-    if (arg && typeof arg === "object" && "toDate" in arg) return (arg as any).toDate();
+    if (arg && typeof arg === "object" && "toDate" in arg && typeof (arg as { toDate: unknown }).toDate === "function") {
+      return (arg as { toDate: () => Date }).toDate();
+    }
+
     return arg;
   }, z.date()).optional(),
 });

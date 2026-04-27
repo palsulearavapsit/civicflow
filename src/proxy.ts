@@ -38,9 +38,13 @@ export function proxy(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   // Extract geo-location from headers (provided by hosting like Vercel)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const country = (request as any).geo?.country || 'US';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const city = (request as any).geo?.city || 'Unknown';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const region = (request as any).geo?.region || 'Unknown';
+
 
   response.headers.set('x-civicflow-geo-country', country);
   response.headers.set('x-civicflow-geo-city', city);
