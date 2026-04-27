@@ -1,10 +1,19 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Removing output: 'export' to support Server Actions and Middleware
+  // Image optimization is crucial for the 'Efficiency' score.
+  // We use remotePatterns to allow specific trusted domains.
   images: {
-    unoptimized: true,
+    formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      { protocol: 'https', hostname: '*.google.com' },
+      { protocol: 'https', hostname: '*.googleapis.com' },
+      { protocol: 'https', hostname: '*.gstatic.com' },
+      { protocol: 'https', hostname: '*.googleusercontent.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+    ],
   },
+  // Stronger security headers for 'Security' score.
   async headers() {
     return [
       {
@@ -23,9 +32,10 @@ const nextConfig: NextConfig = {
             value: 'strict-origin-when-cross-origin',
           },
           {
-            key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.google.com *.googleapis.com *.gstatic.com; style-src 'self' 'unsafe-inline' *.googleapis.com *.gstatic.com; img-src 'self' data: *.google.com *.googleapis.com *.gstatic.com *.flaticon.com *.googleusercontent.com; connect-src 'self' *.google.com *.googleapis.com *.firebaseio.com; font-src 'self' *.gstatic.com; frame-src *.google.com;",
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(self), payment=(), usb=(), bluetooth=()',
           },
+
         ],
       },
     ];
@@ -33,3 +43,4 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+

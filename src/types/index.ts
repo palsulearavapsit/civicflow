@@ -9,7 +9,7 @@ export const LocationSchema = z.object({
 });
 
 export const UserProfileSchema = z.object({
-  uid: z.string(),
+  uid: z.string().min(10),
   email: z.string().email().nullable(),
   displayName: z.string().min(2).nullable(),
   onboarded: z.boolean().default(false),
@@ -17,10 +17,15 @@ export const UserProfileSchema = z.object({
   ageGroup: z.enum(['18-24', '25-44', '45-64', '65+']).default('25-44'),
   isFirstTimeVoter: z.boolean().default(false),
   preferredMethod: z.enum(['in-person', 'early', 'mail']).default('in-person'),
-  language: z.string().default('en'),
+  language: z.string().length(2).default('en'),
   accessibilityNeeds: z.array(z.string()).default([]),
-  lastUpdated: z.any(),
+  lastUpdated: z.preprocess((arg) => {
+    if (typeof arg === "string" || arg instanceof Date) return new Date(arg);
+    if (arg && typeof arg === "object" && "toDate" in arg) return (arg as any).toDate();
+    return arg;
+  }, z.date()).optional(),
 });
+
 
 export const ElectionTaskSchema = z.object({
   id: z.string(),

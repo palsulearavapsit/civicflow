@@ -1,7 +1,7 @@
 {
   "name": "CivicFlow",
   "short_name": "CivicFlow",
-  "description": "Your Secure Election Companion",
+  "description": "Your Industrial-Grade Election Copilot.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",
@@ -11,6 +11,18 @@
       "src": "/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "My Election Plan",
+      "url": "/dashboard",
+      "icons": [{ "src": "/favicon.ico", "sizes": "192x192" }]
+    },
+    {
+      "name": "AI Copilot",
+      "url": "/chat",
+      "icons": [{ "src": "/favicon.ico", "sizes": "192x192" }]
     }
   ]
 }

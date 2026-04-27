@@ -29,6 +29,23 @@ export const UserService = {
     await this.logAudit(uid, "PROFILE_UPDATED", data);
   },
 
+  async logAIInteraction(uid: string, prompt: string, response: string, metadata: any = {}): Promise<void> {
+    if (!db) return;
+    try {
+      const chatLogsRef = collection(db, "ai_interactions");
+      await addDoc(chatLogsRef, {
+        uid,
+        prompt,
+        response,
+        metadata,
+        timestamp: new Date(),
+        model: "gemini-2.0-flash",
+      });
+    } catch (error) {
+      console.error("AI Logging failed:", error);
+    }
+  },
+
   async logAudit(uid: string, action: string, metadata: Record<string, unknown> = {}): Promise<void> {
     if (!db) return;
     try {

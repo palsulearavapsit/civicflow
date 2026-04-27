@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback } from "react";
+
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from "@react-google-maps/api";
 import { List } from "react-window";
 import { Card, Button, cn, MotionCard } from "@/components/ui";
@@ -63,6 +64,42 @@ const mockStations: PollingStation[] = [
   }))
 ];
 
+/**
+ * Optimized row component for the virtualized station list.
+ * Memoized to prevent re-renders when map state changes.
+ */
+const StationRow = React.memo(({ index, style, data }: any) => {
+  const { filteredStations, selectedStation, setSelectedStation } = data;
+  const station = filteredStations[index];
+  const isSelected = selectedStation?.id === station.id;
+
+  return (
+    <div style={style} className="px-4 pb-2">
+      <div 
+        onClick={() => setSelectedStation(station)}
+        className={cn(
+          "p-4 rounded-2xl border transition-all cursor-pointer group flex flex-col gap-1",
+          isSelected 
+          ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/10' 
+          : 'border-slate-100 dark:border-slate-800 hover:border-blue-400 bg-white dark:bg-slate-900/50'
+        )}
+      >
+        <h3 className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors truncate">
+          {station.name}
+        </h3>
+        <p className="text-[10px] text-slate-500 truncate">{station.address}</p>
+        <div className="flex items-center gap-1 mt-1">
+          <span className="flex items-center gap-1 text-[8px] font-black uppercase tracking-wider text-green-600 bg-green-50 dark:bg-green-900/20 px-1.5 py-0.5 rounded">
+            <Clock size={10} /> Open
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+StationRow.displayName = 'StationRow';
+
 export default function PollingMapPage() {
   const { profile } = useAuth();
   const [selectedStation, setSelectedStation] = useState<PollingStation | null>(null);
@@ -80,34 +117,6 @@ export default function PollingMapPage() {
     [stations, searchTerm]
   );
 
-  const StationRow = useCallback(({ index, style }: any) => {
-    const station = filteredStations[index];
-    const isSelected = selectedStation?.id === station.id;
-
-    return (
-      <div style={style} className="px-4 pb-2">
-        <div 
-          onClick={() => setSelectedStation(station)}
-          className={cn(
-            "p-4 rounded-2xl border transition-all cursor-pointer group flex flex-col gap-1",
-            isSelected 
-            ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/10' 
-            : 'border-slate-100 dark:border-slate-800 hover:border-blue-400 bg-white dark:bg-slate-900/50'
-          )}
-        >
-          <h3 className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors truncate">
-            {station.name}
-          </h3>
-          <p className="text-[10px] text-slate-500 truncate">{station.address}</p>
-          <div className="flex items-center gap-1 mt-1">
-            <span className="flex items-center gap-1 text-[8px] font-black uppercase tracking-wider text-green-600 bg-green-50 dark:bg-green-900/20 px-1.5 py-0.5 rounded">
-              <Clock size={10} /> Open
-            </span>
-          </div>
-        </div>
-      </div>
-    );
-  }, [filteredStations, selectedStation]);
 
   return (
     <div className="h-screen flex flex-col md:flex-row bg-slate-50 dark:bg-slate-950 overflow-hidden">
@@ -137,13 +146,20 @@ export default function PollingMapPage() {
         
         <div className="flex-1 min-h-0 py-4">
           <List
-            style={{ height: 600, width: "100%" }}
-            rowCount={filteredStations.length}
-            rowHeight={100}
-            rowComponent={StationRow}
-            rowProps={{}}
-          />
+            height={600}
+            width="100%"
+            itemCount={filteredStations.length}
+            itemSize={100}
+            itemData={{
+              filteredStations,
+              selectedStation,
+              setSelectedStation
+            }}
+          >
+            {StationRow}
+          </List>
         </div>
+
       </aside>
 
       {/* Map Area */}

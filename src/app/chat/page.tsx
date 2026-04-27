@@ -49,39 +49,61 @@ export default function CopilotChat() {
     setInput("");
     setIsTyping(true);
 
+    // Placeholder for assistant message that we will stream into
+    const assistantId = (Date.now() + 1).toString();
+    const assistantMsg: Message = {
+      id: assistantId,
+      role: 'assistant',
+      content: "",
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, assistantMsg]);
+
     try {
-      // Format history for Gemini
       const history = messages.map(msg => ({
         role: (msg.role === 'user' ? 'user' : 'model') as "user" | "model",
         parts: [{ text: msg.content }]
       }));
 
-      const result = await chatWithCopilot(input, history);
+      const response = await fetch("/api/chat/stream", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: input, history }),
+      });
 
-      if (result.success && result.content) {
-        const assistantMsg: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: result.content,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, assistantMsg]);
-      } else {
-        throw new Error(result.error);
+      if (!response.ok) throw new Error("Stream failed");
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let accumulatedContent = "";
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          const chunk = decoder.decode(value, { stream: true });
+          accumulatedContent += chunk;
+          
+          // Update the specific assistant message in state
+          setMessages(prev => prev.map(msg => 
+            msg.id === assistantId ? { ...msg, content: accumulatedContent } : msg
+          ));
+        }
       }
     } catch (error) {
       console.error("Chat Error:", error);
-      const errorMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: "I'm having trouble connecting to my brain right now. Please try again in a moment.",
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, errorMsg]);
+      setMessages(prev => prev.map(msg => 
+        msg.id === assistantId 
+        ? { ...msg, content: "I'm having trouble connecting to my brain right now. Please try again in a moment." } 
+        : msg
+      ));
     } finally {
       setIsTyping(false);
     }
   };
+
 
   return (
     <div className="h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
@@ -108,7 +130,14 @@ export default function CopilotChat() {
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 custom-scrollbar">
+      <div 
+        ref={scrollRef} 
+        role="log" 
+        aria-live="polite" 
+        aria-atomic="false"
+        className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 custom-scrollbar"
+      >
+
         <AnimatePresence mode="popLayout">
           {messages.map((msg) => (
             <motion.div

@@ -1,0 +1,6 @@
+Contact: mailto:security@civicflow.org
+Expires: 2027-01-01T00:00:00.000Z
+Acknowledgments: https://civicflow.org/acknowledgments
+Preferred-Languages: en, es, hi
+Canonical: https://civicflow.org/.well-known/security.txt
+Policy: https://civicflow.org/security-policy
