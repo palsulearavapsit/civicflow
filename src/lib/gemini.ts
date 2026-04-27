@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
 const apiKey = process.env.GEMINI_API_KEY || "";
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -25,9 +25,9 @@ export const model = genAI.getGenerativeModel({
           name: "findPollingStations",
           description: "Search for polling stations near a specific zip code or city.",
           parameters: {
-            type: "object",
+            type: SchemaType.OBJECT,
             properties: {
-              location: { type: "string", description: "Zip code or City name" }
+              location: { type: SchemaType.STRING, description: "Zip code or City name" }
             },
             required: ["location"]
           }
@@ -36,9 +36,9 @@ export const model = genAI.getGenerativeModel({
           name: "getElectionDeadlines",
           description: "Get verified registration and voting deadlines for a specific state.",
           parameters: {
-            type: "object",
+            type: SchemaType.OBJECT,
             properties: {
-              state: { type: "string", description: "US State name (e.g. California)" }
+              state: { type: SchemaType.STRING, description: "US State name (e.g. California)" }
             },
             required: ["state"]
           }
@@ -47,6 +47,7 @@ export const model = genAI.getGenerativeModel({
     }
   ]
 });
+
 
 
 /**

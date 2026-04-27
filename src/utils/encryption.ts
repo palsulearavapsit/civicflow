@@ -31,7 +31,8 @@ export const EncryptionService = {
     return new TextDecoder().decode(decrypted);
   },
 
-  private async getKey(secret: string): Promise<CryptoKey> {
+  async getKey(secret: string): Promise<CryptoKey> {
+
     const encoder = new TextEncoder();
     const keyData = encoder.encode(secret.padEnd(32, '0').slice(0, 32));
     return crypto.subtle.importKey(

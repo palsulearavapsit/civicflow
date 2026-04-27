@@ -17,26 +17,16 @@ export const metadata: Metadata = {
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 import { ThemeProvider } from "@/context/ThemeContext";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import { Suspense } from "react";
 
-import { useEffect } from "react";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((reg) => console.log("SW registered:", reg.scope))
-        .catch((err) => console.log("SW failed:", err));
-    }
-  }, []);
-
   return (
-
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable} antialiased`}>
         <ThemeProvider>
@@ -44,6 +34,7 @@ export default function RootLayout({
             <AuthProvider>
               <VoterProvider>
                 <ErrorBoundary>
+                  <ServiceWorkerRegistration />
                   <Suspense fallback={<div className="h-screen flex items-center justify-center">Loading...</div>}>
                     {children}
                   </Suspense>
@@ -56,5 +47,6 @@ export default function RootLayout({
     </html>
   );
 }
+
 
 

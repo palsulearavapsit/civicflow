@@ -4,6 +4,8 @@ import React, { useState, useMemo, useCallback } from "react";
 
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from "@react-google-maps/api";
 import { List } from "react-window";
+
+
 import { Card, Button, cn, MotionCard } from "@/components/ui";
 import { MapPin, Navigation, Clock, Search, ChevronLeft, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -68,7 +70,7 @@ const mockStations: PollingStation[] = [
  * Optimized row component for the virtualized station list.
  * Memoized to prevent re-renders when map state changes.
  */
-const StationRow = React.memo(({ index, style, data }: any) => {
+const StationRow = React.memo(({ index, style, ...data }: any) => {
   const { filteredStations, selectedStation, setSelectedStation } = data;
   const station = filteredStations[index];
   const isSelected = selectedStation?.id === station.id;
@@ -145,19 +147,19 @@ export default function PollingMapPage() {
         </div>
         
         <div className="flex-1 min-h-0 py-4">
+        <div className="flex-1 min-h-0 py-4">
           <List
-            height={600}
-            width="100%"
-            itemCount={filteredStations.length}
-            itemSize={100}
-            itemData={{
+            rowCount={filteredStations.length}
+            rowHeight={100}
+            rowComponent={StationRow as any}
+            rowProps={{
               filteredStations,
               selectedStation,
               setSelectedStation
             }}
-          >
-            {StationRow}
-          </List>
+          />
+        </div>
+
         </div>
 
       </aside>

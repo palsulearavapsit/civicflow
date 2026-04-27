@@ -24,7 +24,8 @@ export async function POST(req: NextRequest) {
 
 
     // Industrial Standard: Truncate history to prevent token bloat and hallucination
-    const optimizedHistory = fullHistory.slice(-6); 
+    const optimizedHistory = (fullHistory || []).slice(-6); 
+
 
 
     // Create a TransformStream for streaming

@@ -2,34 +2,57 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function proxy(request: NextRequest) {
-  const response = NextResponse.next();
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  
+  // CSP with Nonce - the ultimate protection for modern web apps
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' *.google.com *.googleapis.com *.gstatic.com;
+    style-src 'self' 'unsafe-inline' *.googleapis.com *.gstatic.com;
+    img-src 'self' data: *.google.com *.googleapis.com *.gstatic.com *.flaticon.com *.googleusercontent.com;
+    connect-src 'self' *.google.com *.googleapis.com *.firebaseio.com;
+    font-src 'self' *.gstatic.com;
+    frame-src *.google.com;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    upgrade-insecure-requests;
+  `.replace(/\s{2,}/g, ' ').trim();
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-nonce', nonce);
+  requestHeaders.set('Content-Security-Policy', cspHeader);
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
+  response.headers.set('Content-Security-Policy', cspHeader);
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   // Extract geo-location from headers (provided by hosting like Vercel)
   const country = (request as any).geo?.country || 'US';
   const city = (request as any).geo?.city || 'Unknown';
   const region = (request as any).geo?.region || 'Unknown';
 
-  // Set a custom header for the app to consume
   response.headers.set('x-civicflow-geo-country', country);
   response.headers.set('x-civicflow-geo-city', city);
   response.headers.set('x-civicflow-geo-region', region);
-
-  // Security: Add basic rate limiting signal (can be expanded)
-  // For this hackathon, we'll just log the request
-  console.log(`[Middleware] Request from ${city}, ${region} (${country})`);
+  
+  // Performance Optimization: Geo-detection cookie for initial state
+  response.cookies.set('x-user-geo', `${country}-${region}`, { path: '/', maxAge: 3600 });
 
   return response;
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
+
