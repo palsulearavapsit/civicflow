@@ -7,7 +7,7 @@ export function proxy(request: NextRequest) {
   // CSP with Nonce - the ultimate protection for modern web apps
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' *.google.com *.googleapis.com *.gstatic.com;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' *.google.com *.googleapis.com *.gstatic.com;
     style-src 'self' 'unsafe-inline' *.googleapis.com *.gstatic.com;
     img-src 'self' data: *.google.com *.googleapis.com *.gstatic.com *.flaticon.com *.googleusercontent.com;
     connect-src 'self' *.google.com *.googleapis.com *.firebaseio.com;
@@ -19,6 +19,8 @@ export function proxy(request: NextRequest) {
     frame-ancestors 'none';
     upgrade-insecure-requests;
   `.replace(/\s{2,}/g, ' ').trim();
+
+
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-nonce', nonce);
