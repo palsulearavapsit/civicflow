@@ -29,7 +29,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable} antialiased`}>
+        <a 
+          href="#main-content" 
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-[999] bg-blue-600 text-white px-4 py-2 rounded-lg font-bold shadow-xl"
+        >
+          Skip to main content
+        </a>
         <ThemeProvider>
+
           <I18nProvider>
             <AuthProvider>
               <VoterProvider>

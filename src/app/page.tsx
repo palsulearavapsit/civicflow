@@ -60,7 +60,8 @@ export default function LandingPage() {
         <div className="absolute -bottom-[20%] -right-[10%] w-[600px] h-[600px] bg-indigo-400/20 rounded-full blur-[120px]"></div>
       </div>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-4 pt-20 pb-32 flex flex-col items-center text-center">
+      <main id="main-content" tabIndex={-1} className="relative z-10 max-w-7xl mx-auto px-4 pt-20 pb-32 flex flex-col items-center text-center outline-none">
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

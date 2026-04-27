@@ -1,6 +1,8 @@
 import { doc, getDoc, setDoc, updateDoc, collection, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserProfile, UserProfileSchema } from "@/types";
+import { SecurityService } from "@/utils/security";
+
 
 export const UserService = {
   async getProfile(uid: string): Promise<UserProfile | null> {
@@ -19,8 +21,9 @@ export const UserService = {
     if (!db) return;
     const docRef = doc(db, "users", profile.uid);
     await setDoc(docRef, { ...profile, lastUpdated: new Date() });
-    await this.logAudit(profile.uid, "PROFILE_CREATED", { email: profile.email });
+    await this.logAudit(profile.uid, "PROFILE_CREATED", { email: SecurityService.maskPII(profile.email || '') });
   },
+
 
   async updateProfile(uid: string, data: Partial<UserProfile>): Promise<void> {
     if (!db) return;
