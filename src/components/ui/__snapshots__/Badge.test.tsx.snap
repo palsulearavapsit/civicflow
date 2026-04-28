@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Badge Component > renders correctly with danger variant 1`] = `
+<DocumentFragment>
+  <span
+    class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+  >
+    Error
+  </span>
+</DocumentFragment>
+`;
+
+exports[`Badge Component > renders correctly with default variant 1`] = `
+<DocumentFragment>
+  <span
+    class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+  >
+    Test Badge
+  </span>
+</DocumentFragment>
+`;
+
+exports[`Badge Component > renders correctly with success variant 1`] = `
+<DocumentFragment>
+  <span
+    class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+  >
+    Success
+  </span>
+</DocumentFragment>
+`;

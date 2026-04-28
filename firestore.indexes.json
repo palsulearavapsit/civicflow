@@ -1,4 +1,85 @@
 {
-  "indexes": [],
-  "fieldOverrides": []
+  "indexes": [
+    {
+      "collectionGroup": "audit_logs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "uid", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "audit_logs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "action", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "ai_interactions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "uid", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "ai_interactions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "model", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "ai_feedback",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "uid", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "ai_feedback",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "rating", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "location.state", "order": "ASCENDING" },
+        { "fieldPath": "lastUpdated", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "onboarded", "order": "ASCENDING" },
+        { "fieldPath": "lastUpdated", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "feature_flags",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "key", "order": "ASCENDING" },
+        { "fieldPath": "updatedAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "audit_logs",
+      "fieldPath": "timestamp",
+      "indexes": [
+        { "order": "DESCENDING", "queryScope": "COLLECTION" }
+      ]
+    }
+  ]
 }

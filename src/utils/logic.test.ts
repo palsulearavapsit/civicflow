@@ -28,7 +28,7 @@ describe('CivicFlow Logic Engine', () => {
   describe('Data Integrity (Zod Schemas)', () => {
     it('should validate a correct user profile', () => {
       const validProfile = {
-        uid: "user-123",
+        uid: "user-123-long-id",
         email: "test@example.com",
         displayName: "John Doe",
         onboarded: true,
