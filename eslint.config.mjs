@@ -13,6 +13,11 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      "complexity": ["error", 10]
+    }
+  }
 ]);
 
 export default eslintConfig;

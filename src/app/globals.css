@@ -8,6 +8,9 @@
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
+  /* Implementation Roadmap: 5.8 Color Blindness safe palette */
+  --color-cb-safe-blue: #005ab5;
+  --color-cb-safe-yellow: #ffdc91;
 }
 
 :root {
@@ -72,3 +75,19 @@ body {
 .text-large h1 { font-size: 3rem; }
 .text-large h2 { font-size: 2.25rem; }
 .text-large p { font-size: 1.5rem; }
+
+/* Implementation Roadmap: 5.4 Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Implementation Roadmap: 5.10 Focus-Visible */
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}

@@ -1,0 +1,25 @@
+# CivicFlow CODEOWNERS
+# This file defines domain experts and automatically requests their review on pull requests.
+
+# Global owners (default reviewers for everything)
+*       @palsulearavapsit
+
+# Frontend / UI Architecture
+/src/app/                  @palsulearavapsit
+/src/components/           @palsulearavapsit
+/src/styles/               @palsulearavapsit
+tailwind.config.ts         @palsulearavapsit
+
+# Backend / API / Firebase
+/src/app/api/              @palsulearavapsit
+/src/lib/firebase/         @palsulearavapsit
+firebase.json              @palsulearavapsit
+firestore.rules            @palsulearavapsit
+
+# AI / Machine Learning
+/src/lib/gemini/           @palsulearavapsit
+
+# Security & Infrastructure
+next.config.ts             @palsulearavapsit
+package.json               @palsulearavapsit
+.github/                   @palsulearavapsit

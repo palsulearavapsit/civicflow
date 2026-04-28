@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  compress: true, // Implementation Roadmap: 3.18
   // Image optimization is crucial for the 'Efficiency' score.
   // We use remotePatterns to allow specific trusted domains.
   images: {
@@ -35,7 +36,22 @@ const nextConfig: NextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(self), payment=(), usb=(), bluetooth=()',
           },
-
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin',
+          },
+          {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'same-origin',
+          },
+          {
+            key: 'Content-Security-Policy-Report-Only',
+            value: "default-src 'self'; report-uri /api/csp-report",
+          },
         ],
       },
     ];
