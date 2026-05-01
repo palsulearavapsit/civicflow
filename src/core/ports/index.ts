@@ -7,6 +7,18 @@ export interface AIService {
   streamResponse(prompt: string, history: any[]): AsyncGenerator<string>;
 }
 
+export type FeatureFlagKey = 
+  | 'ai_multimodal'
+  | 'vertex_ai'
+  | 'gemini_1_5_pro'
+  | 'search_grounding'
+  | 'voice_recognition'
+  | 'ppr_dashboard'
+  | 'wasm_election_logic'
+  | 'ai_feedback_loop'
+  | 'cost_tracking'
+  | 'model_ab_testing';
+
 export interface IUserRepository {
   findById(uid: string): Promise<Result<UserProfile | null, DatabaseError>>;
   save(profile: UserProfile): Promise<Result<void, DatabaseError>>;
