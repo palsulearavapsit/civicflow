@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
 
   // EFF-01: Partial Prerendering (PPR) for Dashboard
   experimental: {
-    ppr: 'incremental',
+    cacheComponents: true,
     optimizePackageImports: ['lucide-react', 'framer-motion', '@google/generative-ai'],
   },
 
