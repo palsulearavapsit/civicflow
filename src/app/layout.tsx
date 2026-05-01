@@ -21,6 +21,10 @@ import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import { Suspense } from "react";
 
 
+import { CommandPalette } from "@/components/organisms/CommandPalette";
+
+import { SkipLink } from "@/components/atoms/SkipLink";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,12 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable} antialiased`}>
-        <a 
-          href="#main-content" 
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-[999] bg-blue-600 text-white px-4 py-2 rounded-lg font-bold shadow-xl"
-        >
-          Skip to main content
-        </a>
+        <SkipLink targetId="main-content" />
         <ThemeProvider>
 
           <I18nProvider>
@@ -42,6 +41,7 @@ export default function RootLayout({
               <VoterProvider>
                 <ErrorBoundary>
                   <ServiceWorkerRegistration />
+                  <CommandPalette />
                   <Suspense fallback={<div className="h-screen flex items-center justify-center">Loading...</div>}>
                     {children}
                   </Suspense>

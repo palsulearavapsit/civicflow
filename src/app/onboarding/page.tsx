@@ -14,6 +14,8 @@ const steps = [
 ];
 
 import { UserProfile } from "@/types";
+import { logAuditEntry } from "@/lib/audit";
+import { Input } from "@/components/atoms";
 
 interface OnboardingData {
   location: { state: string; zipCode: string };
@@ -41,6 +43,11 @@ export default function OnboardingPage() {
       try {
         if (profile) {
           await updateProfile({ ...formData, onboarded: true });
+          // SEC-12: Immutable Audit Vault
+          await logAuditEntry(profile.uid, 'onboarding_complete', { 
+            state: formData.location.state,
+            method: formData.preferredMethod 
+          });
         }
       } catch (e) {
         console.warn("Profile update failed, proceeding anyway", e);
@@ -85,26 +92,18 @@ export default function OnboardingPage() {
                 <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Where do you vote?</h1>
                 <p className="text-slate-500">We need your location to show you specific deadlines and polling places.</p>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold">State</label>
-                    <input 
-                      type="text" 
-                      className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 outline-none"
-                      placeholder="State"
-                      value={formData.location.state}
-                      onChange={e => setFormData({...formData, location: {...formData.location, state: e.target.value}})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold">ZIP Code</label>
-                    <input 
-                      type="text" 
-                      className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 outline-none"
-                      placeholder="Pincode"
-                      value={formData.location.zipCode}
-                      onChange={e => setFormData({...formData, location: {...formData.location, zipCode: e.target.value}})}
-                    />
-                  </div>
+                  <Input 
+                    label="State"
+                    placeholder="e.g. California"
+                    value={formData.location.state}
+                    onChange={e => setFormData({...formData, location: {...formData.location, state: e.target.value}})}
+                  />
+                  <Input 
+                    label="ZIP Code"
+                    placeholder="90210"
+                    value={formData.location.zipCode}
+                    onChange={e => setFormData({...formData, location: {...formData.location, zipCode: e.target.value}})}
+                  />
                 </div>
               </div>
             )}

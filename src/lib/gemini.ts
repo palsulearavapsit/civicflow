@@ -147,6 +147,9 @@ export function createModel(
     systemInstruction: buildSystemInstruction(state),
     tools: [
       {
+        googleSearch: {} 
+      },
+      {
         functionDeclarations: [
           {
             name: 'findPollingStations',
@@ -245,6 +248,18 @@ export async function* getGeminiStream(
     const text = chunk.text();
     if (text) yield text;
   }
+}
+
+/**
+ * A11Y-22: Plain Language AI Translation.
+ * Simplifies complex text into easy-to-read instructions.
+ */
+export async function translateToPlainLanguage(text: string): Promise<string> {
+  const prompt = `Simplify the following election-related text into plain, easy-to-read language (aim for 4th-grade level). 
+  Use short sentences and bullet points. Text: "${text}"`;
+  
+  const result = await model.generateContent(prompt);
+  return result.response.text();
 }
 
 // ─── Structured Output (AI-25) ────────────────────────────────────────────────

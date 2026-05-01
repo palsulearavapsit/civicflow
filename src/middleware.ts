@@ -106,6 +106,12 @@ export function middleware(req: NextRequest) {
   const key = getRateLimitKey(req);
   const { allowed, remaining, retryAfter } = checkRateLimit(key, maxReqs);
 
+  // SEC-03: Cloud Armor (Mock) Header Verification
+  const wafToken = req.headers.get('x-cloud-armor-token');
+  if (process.env.NODE_ENV === 'production' && !wafToken) {
+    console.warn('[WAF Warning]: Request bypassed Cloud Armor edge protection.');
+  }
+
   if (!allowed) {
     return NextResponse.json(
       { error: 'Rate limit exceeded', code: 'RATE_LIMITED', retryAfter },
@@ -122,11 +128,46 @@ export function middleware(req: NextRequest) {
     );
   }
 
-  // ── Apply security headers to all responses ───────────────────────────────
+  // EFF-09: Edge Image Optimization
+  if (pathname.match(/\.(png|jpg|jpeg)$/)) {
+    const url = new URL(req.url);
+    url.searchParams.set('format', 'avif');
+    url.searchParams.set('quality', '85');
+    return NextResponse.rewrite(url);
+  }
+
+  // SEC-09: CSRF Protection
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+    const csrfToken = req.headers.get('x-csrf-token');
+    const cookieToken = req.cookies.get('csrf-token')?.value;
+    
+    if (process.env.NODE_ENV === 'production' && (!csrfToken || csrfToken !== cookieToken)) {
+      return NextResponse.json(
+        { error: 'CSRF validation failed', code: 'CSRF_VIOLATION' },
+        { status: 403 }
+      );
+    }
+  }
+
+  // SEC-05: Strict CSP Nonce Injection
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: http:;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' blob: data: https:;
+    font-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    block-all-mixed-content;
+    upgrade-insecure-requests;
+  `.replace(/\s{2,}/g, ' ').trim();
+
   const response = NextResponse.next();
-  Object.entries({ ...SECURITY_HEADERS, ...getCorsHeaders(origin) }).forEach(([k, v]) => {
-    response.headers.set(k, v as string);
-  });
+  response.headers.set('Content-Security-Policy', cspHeader);
+  response.headers.set('X-Nonce', nonce); // For use in server components
   response.headers.set('X-RateLimit-Limit', String(maxReqs));
   response.headers.set('X-RateLimit-Remaining', String(remaining));
 

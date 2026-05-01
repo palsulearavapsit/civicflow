@@ -12,21 +12,14 @@ interface VoterContextType {
 
 const VoterContext = createContext<VoterContextType | undefined>(undefined);
 
-import { generatePlan } from "@/utils/election-logic";
-
+import { useElectionWorker } from "@/hooks/useElectionWorker";
 
 export function VoterProvider({ children }: { children: React.ReactNode }) {
   const { profile } = useAuth();
-  const [tick, setTick] = useState(0);
-
-  const plan = useMemo(() => {
-    // Access tick to ensure dependency is used and triggers refresh when requested
-    if (tick < 0) console.log(tick); 
-    return generatePlan(profile);
-  }, [profile, tick]);
+  const { plan, loading, recalculate } = useElectionWorker(profile);
 
   return (
-    <VoterContext.Provider value={{ plan, refreshPlan: () => setTick(t => t + 1) }}>
+    <VoterContext.Provider value={{ plan, refreshPlan: recalculate }}>
       {children}
     </VoterContext.Provider>
   );

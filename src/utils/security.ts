@@ -29,6 +29,26 @@ export const SecurityService = {
   },
 
   /**
+   * Recursively masks PII in objects/arrays for safe logging.
+   */
+  maskObjectPII(obj: any): any {
+    if (typeof obj !== 'object' || obj === null) return obj;
+    if (Array.isArray(obj)) return obj.map(item => this.maskObjectPII(item));
+
+    const masked: any = {};
+    const sensitiveKeys = ['email', 'password', 'zipCode', 'address', 'phoneNumber', 'ssn'];
+
+    for (const [key, value] of Object.entries(obj)) {
+      if (sensitiveKeys.includes(key) && typeof value === 'string') {
+        masked[key] = this.maskPII(value);
+      } else {
+        masked[key] = this.maskObjectPII(value);
+      }
+    }
+    return masked;
+  },
+
+  /**
    * Sanitizes user input for basic display to prevent injection.
    */
   sanitize(text: string): string {

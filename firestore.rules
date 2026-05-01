@@ -48,6 +48,13 @@ service cloud.firestore {
       allow delete: if isOwner(resource.data.uid);
     }
 
+    // SEC-12: Immutable Audit Vault (Append-only for users, Read-only for admins)
+    match /audit_vault/{logId} {
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow read: if isAdmin();
+      allow update, delete: if false; // Immutable
+    }
+
     // FAQs, Myths/Facts (Public read, Admin write)
     match /faq/{id} {
       allow read: if true;
@@ -57,6 +64,11 @@ service cloud.firestore {
     match /myths_facts/{id} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // Default deny
+    match /{path=**} {
+      allow read, write: if false;
     }
   }
 }

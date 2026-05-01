@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline | CivicFlow</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f8fafc; color: #1e293b; text-align: center; }
+        .card { background: white; padding: 2rem; border-radius: 1.5rem; shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; max-width: 400px; }
+        h1 { margin: 0 0 1rem; color: #2563eb; }
+        p { color: #64748b; line-height: 1.6; }
+        button { background: #2563eb; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-weight: bold; cursor: pointer; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>You're Offline</h1>
+        <p>It looks like you've lost your connection. CivicFlow will automatically reconnect when you're back online.</p>
+        <button onclick="window.location.reload()">Retry Connection</button>
+    </div>
+</body>
+</html>

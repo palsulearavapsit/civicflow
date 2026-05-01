@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { format, differenceInDays } from "date-fns";
+import { generateElectionReminderPass } from "@/lib/google-wallet";
 
 export default function Dashboard() {
   const { plan } = useVoter();
@@ -102,8 +103,15 @@ export default function Dashboard() {
                       <Badge variant="warning">High Priority</Badge>
                     </div>
                     <p className="text-slate-500 text-sm">{nextAction.description}</p>
-                    <div className="pt-4 flex items-center gap-4">
+                    <div className="pt-4 flex flex-wrap items-center gap-4">
                       <Button className="bg-slate-900 dark:bg-white dark:text-slate-900 text-white">Complete Now</Button>
+                      <button 
+                        onClick={() => window.open(generateElectionReminderPass(format(nextAction.deadline, 'MMM dd'), profile?.location.state || ''), '_blank')}
+                        className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-xl border border-slate-700 hover:bg-slate-900 transition-colors"
+                      >
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Wallet_Icon_2022.svg/512px-Google_Wallet_Icon_2022.svg.png" className="w-5 h-5" alt="" />
+                        <span className="text-xs font-bold">Add to Wallet</span>
+                      </button>
                       <Link href="/resources" className="text-sm font-bold text-blue-600 hover:underline">Learn More</Link>
                     </div>
                   </div>

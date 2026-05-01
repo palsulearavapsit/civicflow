@@ -6,11 +6,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function Card({ children, className, role }: { children: React.ReactNode; className?: string; role?: string }) {
+export function Card({ children, className, role, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div 
       role={role}
       className={cn("bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm", className)}
+      {...props}
     >
       {children}
     </div>
@@ -22,7 +23,7 @@ export function MotionCard({ children, className, ...props }: React.ComponentPro
   
   return (
     <motion.div
-      whileHover={shouldReduceMotion ? {} : { y: -5, scale: 1.02, rotateX: 2, rotateY: 2 }}
+      whileHover={shouldReduceMotion ? {} : { y: -5, scale: 1.01, rotateX: 1, rotateY: 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className={cn("bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl shadow-slate-200/50 dark:shadow-none", className)}
       {...props}
@@ -46,9 +47,17 @@ export function Badge({ children, variant = 'default' }: { children: React.React
   );
 }
 
-export function Button({ children, className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+import { useHaptics } from "@/hooks/useHaptics";
+
+export function Button({ children, className, onClick, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  const { trigger } = useHaptics();
+  
   return (
     <button 
+      onClick={(e) => {
+        trigger('light');
+        onClick?.(e);
+      }}
       className={cn(
         "px-6 py-2.5 rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
         "focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:focus-visible:ring-offset-slate-950",

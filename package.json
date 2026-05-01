@@ -28,7 +28,9 @@
     "analyze:deps": "npx tsx scripts/dep-graph.ts",
     "analyze:props": "npx tsx scripts/detect-prop-drilling.ts",
     "security:audit": "npm audit --audit-level=high",
-    "openapi:validate": "node -e \"fetch('http://localhost:3000/api/openapi').then(r=>r.json()).then(s=>console.log('✅ OpenAPI schema valid:', s.info.title)).catch(e=>console.error('❌', e))\""
+    "openapi:validate": "node -e \"fetch('http://localhost:3000/api/openapi').then(r=>r.json()).then(s=>console.log('✅ OpenAPI schema valid:', s.info.title)).catch(e=>console.error('❌', e))\"",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -80,6 +82,18 @@
     "msw": "^2.13.6",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.5",
+    "storybook": "^10.3.6",
+    "@storybook/nextjs-vite": "^10.3.6",
+    "@chromatic-com/storybook": "^5.1.2",
+    "@storybook/addon-vitest": "^10.3.6",
+    "@storybook/addon-a11y": "^10.3.6",
+    "@storybook/addon-docs": "^10.3.6",
+    "@storybook/addon-onboarding": "^10.3.6",
+    "vite": "^8.0.10",
+    "eslint-plugin-storybook": "^10.3.6",
+    "playwright": "^1.59.1",
+    "@vitest/browser-playwright": "^4.1.5",
+    "@vitest/coverage-v8": "^4.1.5"
   }
 }

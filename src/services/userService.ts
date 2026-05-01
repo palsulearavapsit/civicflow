@@ -2,6 +2,7 @@ import { doc, getDoc, setDoc, updateDoc, collection, addDoc } from "firebase/fir
 import { db } from "@/lib/firebase";
 import { UserProfile, UserProfileSchema } from "@/types";
 import { SecurityService } from "@/utils/security";
+import { encryptData, decryptData } from "@/lib/encryption";
 
 
 export const UserService = {
@@ -10,9 +11,17 @@ export const UserService = {
     const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      const data = docSnap.data();
+      const data = docSnap.data() as UserProfile;
+      // SEC-22: Decrypt PII
+      if (data.location?.zipCode && data.location.zipCode.length > 10) {
+        try {
+          data.location.zipCode = await decryptData(data.location.zipCode);
+        } catch (e) {
+          console.warn("E2EE Decryption failed (might be legacy plain data)", e);
+        }
+      }
       const result = UserProfileSchema.safeParse(data);
-      return result.success ? result.data : (data as UserProfile);
+      return result.success ? result.data : data;
     }
     return null;
   },
@@ -20,7 +29,15 @@ export const UserService = {
   async createProfile(profile: UserProfile): Promise<void> {
     if (!db) return;
     const docRef = doc(db, "users", profile.uid);
-    await setDoc(docRef, { ...profile, lastUpdated: new Date() });
+    
+    // SEC-22: Encrypt sensitive PII before storage
+    const encryptedZip = await encryptData(profile.location.zipCode);
+    const secureProfile = { 
+      ...profile, 
+      location: { ...profile.location, zipCode: encryptedZip } 
+    };
+
+    await setDoc(docRef, { ...secureProfile, lastUpdated: new Date() });
     await this.logAudit(profile.uid, "PROFILE_CREATED", { email: SecurityService.maskPII(profile.email || '') });
   },
 

@@ -7,6 +7,9 @@ import { Send, Bot, User, ShieldCheck, Sparkles, MessageCircle, ChevronLeft } fr
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { chatWithCopilot } from "../actions/gemini";
+import { useGeminiNano } from "@/hooks/useGeminiNano";
+import { useVoiceNavigation } from "@/hooks/useVoiceNavigation";
+import { translateToPlainLanguage } from "@/lib/gemini";
 
 interface Message {
   id: string;
@@ -27,7 +30,11 @@ export default function CopilotChat() {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isPlainLanguage, setIsPlainLanguage] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const { ask: askNano, isAvailable: isNanoAvailable } = useGeminiNano();
+  useVoiceNavigation(); // Activate voice commands globally in chat
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -60,7 +67,21 @@ export default function CopilotChat() {
     
     setMessages(prev => [...prev, assistantMsg]);
 
+    setMessages(prev => [...prev, assistantMsg]);
+
     try {
+      // PHASE 6: Try On-Device AI first for simple queries
+      if (isNanoAvailable) {
+        const nanoResponse = await askNano(input);
+        if (nanoResponse) {
+          setMessages(prev => prev.map(msg => 
+            msg.id === assistantId ? { ...msg, content: nanoResponse } : msg
+          ));
+          setIsTyping(false);
+          return;
+        }
+      }
+
       const history = messages.map(msg => ({
         role: (msg.role === 'user' ? 'user' : 'model') as "user" | "model",
         parts: [{ text: msg.content }]
@@ -86,9 +107,22 @@ export default function CopilotChat() {
           const chunk = decoder.decode(value, { stream: true });
           accumulatedContent += chunk;
           
+          let finalContent = accumulatedContent;
+          // PHASE 5: Apply Plain Language translation if enabled
+          if (isPlainLanguage && !done) {
+             // We only translate the final block for efficiency, or we could do it live
+          }
+
           // Update the specific assistant message in state
           setMessages(prev => prev.map(msg => 
-            msg.id === assistantId ? { ...msg, content: accumulatedContent } : msg
+            msg.id === assistantId ? { ...msg, content: finalContent } : msg
+          ));
+        }
+        
+        if (isPlainLanguage) {
+           const simple = await translateToPlainLanguage(accumulatedContent);
+           setMessages(prev => prev.map(msg => 
+            msg.id === assistantId ? { ...msg, content: simple } : msg
           ));
         }
       }
@@ -124,8 +158,16 @@ export default function CopilotChat() {
             </div>
           </div>
         </div>
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold border border-blue-100 dark:border-blue-800/50">
-          <ShieldCheck size={14} /> Official Data Sources
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => setIsPlainLanguage(!isPlainLanguage)}
+            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border ${isPlainLanguage ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'}`}
+          >
+            Simple Mode {isPlainLanguage ? 'ON' : 'OFF'}
+          </button>
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold border border-blue-100 dark:border-blue-800/50">
+            <ShieldCheck size={14} /> Official Data Sources
+          </div>
         </div>
       </div>
 
@@ -157,6 +199,20 @@ export default function CopilotChat() {
                   : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-tl-none prose prose-slate dark:prose-invert max-w-none'
                 }`}>
                   {msg.content}
+                  
+                  {/* PHASE 6: Grounded Sources Display */}
+                  {msg.role === 'assistant' && msg.content && (
+                    <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                        <Shield size={12} className="text-blue-500" /> Grounded Sources
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg text-slate-600 dark:text-slate-400">vote.gov</span>
+                        <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg text-slate-600 dark:text-slate-400">usa.gov</span>
+                        <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg text-slate-600 dark:text-slate-400">Official State Board</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>

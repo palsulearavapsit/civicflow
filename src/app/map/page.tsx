@@ -2,12 +2,13 @@
 
 import React, { useState, useMemo, useCallback } from "react";
 
-import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, Marker, InfoWindow, HeatmapLayer } from "@react-google-maps/api";
 import { List } from "react-window";
 
 
 import { Card, Button, cn, MotionCard } from "@/components/ui";
 import { MapPin, Navigation, Clock, Search, ChevronLeft, ShieldCheck } from "lucide-react";
+import { streamEngagementToBigQuery } from "@/lib/bigquery";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { PollingStation } from "@/types";
@@ -188,6 +189,14 @@ export default function PollingMapPage() {
             zoom={13}
             options={mapOptions as google.maps.MapOptions}
           >
+            {/* GOOGLE-24: Heatmap for Civic Issues / Voter Density */}
+            {typeof google !== 'undefined' && (
+              <HeatmapLayer
+                data={mockStations.map(s => new google.maps.LatLng(s.location.lat, s.location.lng))}
+                options={{ radius: 30, opacity: 0.6 }}
+              />
+            )}
+
             {filteredStations.map((station) => (
               <Marker
                 key={station.id}

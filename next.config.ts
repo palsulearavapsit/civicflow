@@ -55,6 +55,8 @@ const nextConfig: NextConfig = {
           { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
           { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
           { key: 'Content-Security-Policy-Report-Only', value: "default-src 'self'; script-src 'self' 'unsafe-inline' https://maps.googleapis.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com; report-uri /api/csp-report" },
+          // EFF-02: HTTP/3 (QUIC) Alt-Svc header
+          { key: 'Alt-Svc', value: 'h3=":443"; ma=86400' },
           // EFF-04: Streaming metadata header
           { key: 'X-Metadata-Streaming', value: 'enabled' },
         ],
