@@ -166,6 +166,17 @@ export function middleware(req: NextRequest) {
   `.replace(/\s{2,}/g, ' ').trim();
 
   const response = NextResponse.next();
+  
+  // GOOGLE-04: Geo-location detection (Vercel/Edge context)
+  const country = (req as any).geo?.country || 'US';
+  const region = (req as any).geo?.region || 'Unknown';
+  const city = (req as any).geo?.city || 'Unknown';
+
+  response.headers.set('x-civicflow-geo-country', country);
+  response.headers.set('x-civicflow-geo-city', city);
+  response.headers.set('x-civicflow-geo-region', region);
+  response.cookies.set('x-user-geo', `${country}-${region}`, { path: '/', maxAge: 3600 });
+
   response.headers.set('Content-Security-Policy', cspHeader);
   response.headers.set('X-Nonce', nonce); // For use in server components
   response.headers.set('X-RateLimit-Limit', String(maxReqs));

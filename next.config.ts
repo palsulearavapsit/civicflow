@@ -2,10 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   compress: true,
+  cacheComponents: true,
 
   // EFF-01: Partial Prerendering (PPR) for Dashboard
   experimental: {
-    cacheComponents: true,
     optimizePackageImports: ['lucide-react', 'framer-motion', '@google/generative-ai'],
   },
 
