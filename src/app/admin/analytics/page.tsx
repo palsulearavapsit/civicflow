@@ -30,6 +30,7 @@ export default function AnalyticsPage() {
   const [stats, setStats] = useState({ totalCost: 0, totalTokens: 0, avgResponse: 0 });
 
   const fetchData = async () => {
+    if (!db) return;
     setLoading(true);
     try {
       const q = query(
