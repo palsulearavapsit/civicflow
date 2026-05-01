@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Card, Button } from "@/components/ui";
-import { Send, Bot, User, ShieldCheck, Sparkles, MessageCircle, ChevronLeft } from "lucide-react";
+import { Send, Bot, User, ShieldCheck, Sparkles, MessageCircle, ChevronLeft, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { chatWithCopilot } from "../actions/gemini";
