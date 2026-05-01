@@ -1,7 +1,6 @@
-/**
- * CODE-05: Clean Architecture Ports.
- * Interfaces for external services to decouple logic from frameworks.
- */
+import type { UserProfile } from '@/types';
+import type { Result } from '@/types/result';
+import type { DatabaseError } from '@/core/errors';
 
 export interface AIService {
   generateResponse(prompt: string, history: any[]): Promise<string>;
@@ -9,8 +8,10 @@ export interface AIService {
 }
 
 export interface IUserRepository {
-  getUser(uid: string): Promise<any>;
-  saveUser(uid: string, data: any): Promise<void>;
+  findById(uid: string): Promise<Result<UserProfile | null, DatabaseError>>;
+  save(profile: UserProfile): Promise<Result<void, DatabaseError>>;
+  update(uid: string, data: Partial<UserProfile>): Promise<Result<void, DatabaseError>>;
+  delete(uid: string): Promise<Result<void, DatabaseError>>;
 }
 
 export interface AuditEntry {
@@ -18,10 +19,12 @@ export interface AuditEntry {
   action: string;
   metadata: any;
   timestamp: Date;
+  signature?: string;
 }
 
 export interface IAuditRepository {
-  logAudit(entry: AuditEntry): Promise<void>;
+  log(entry: AuditEntry): Promise<Result<void, DatabaseError>>;
+  findByUser(uid: string, limitN?: number): Promise<Result<AuditEntry[], DatabaseError>>;
 }
 
 export interface StorageService {
