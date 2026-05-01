@@ -33,12 +33,14 @@ export function MotionCard({ children, className, ...props }: React.ComponentPro
   );
 }
 
-export function Badge({ children, variant = 'default' }: { children: React.ReactNode; variant?: 'default' | 'success' | 'warning' | 'danger' }) {
+export function Badge({ children, variant = 'default' }: { children: React.ReactNode; variant?: 'default' | 'success' | 'warning' | 'danger' | 'info' | 'premium' }) {
   const styles = {
     default: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
     success: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
     warning: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-    danger: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+    danger: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+    info: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+    premium: 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-none',
   };
   return (
     <span className={cn("px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider", styles[variant])}>
@@ -49,9 +51,20 @@ export function Badge({ children, variant = 'default' }: { children: React.React
 
 import { useHaptics } from "@/hooks/useHaptics";
 
-export function Button({ children, className, onClick, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'default' | 'ghost' | 'outline' | 'danger';
+}
+
+export function Button({ children, className, onClick, variant = 'default', ...props }: ButtonProps) {
   const { trigger } = useHaptics();
   
+  const variantStyles = {
+    default: 'bg-blue-600 text-white hover:bg-blue-700',
+    ghost: 'bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400',
+    outline: 'bg-transparent border-2 border-slate-200 dark:border-slate-800 hover:border-blue-500',
+    danger: 'bg-red-600 text-white hover:bg-red-700',
+  };
+
   return (
     <button 
       onClick={(e) => {
@@ -61,6 +74,7 @@ export function Button({ children, className, onClick, ...props }: React.ButtonH
       className={cn(
         "px-6 py-2.5 rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
         "focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:focus-visible:ring-offset-slate-950",
+        variantStyles[variant],
         className
       )}
       {...props}
