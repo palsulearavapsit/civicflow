@@ -14,9 +14,7 @@ import { useState, useRef, useCallback } from 'react';
 import { FeatureFlagService } from '@/core/feature-flags';
 
 // A11Y-03: Web Speech API types for TypeScript
-// @ts-expect-error - Web Speech API types are not standard in all environments
 type SpeechRecognition = any;
-// @ts-expect-error - Web Speech API types are not standard in all environments
 type SpeechRecognitionEvent = any;
 
 type VoiceInputState = 'idle' | 'listening' | 'processing' | 'error';
