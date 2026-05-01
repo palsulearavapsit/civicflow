@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-export const runtime = 'edge';
+
 
 const AnalyzeRequestSchema = z.object({
   imageBase64: z.string().min(100),
