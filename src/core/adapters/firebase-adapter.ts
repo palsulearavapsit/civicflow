@@ -32,7 +32,7 @@ import { UserProfileSchema } from '@/types';
 import type { UserProfile } from '@/types';
 import type { IUserRepository, IAuditRepository, AuditEntry } from '@/core/ports';
 import type { Result } from '@/types/result';
-import { ok, err, tryCatchMap } from '@/types/result';
+import { ok, err, tryCatchMap, map } from '@/types/result';
 import { DatabaseError, NotFoundError } from '@/core/errors';
 
 // ─── Memoization Cache ────────────────────────────────────────────────────────
@@ -158,12 +158,15 @@ export const FirebaseAuditRepository: IAuditRepository = {
    */
   async log(entry: AuditEntry): Promise<Result<void, DatabaseError>> {
     if (!db) return ok(undefined);
-    return tryCatchMap(
-      addDoc(collection(db!, 'audit_logs'), {
-        ...entry,
-        timestamp: entry.timestamp ?? new Date(),
-      }),
-      (e) => new DatabaseError('Failed to write audit log', e)
+    return map(
+      await tryCatchMap(
+        addDoc(collection(db!, 'audit_logs'), {
+          ...entry,
+          timestamp: entry.timestamp ?? new Date(),
+        }),
+        (e) => new DatabaseError('Failed to write audit log', e)
+      ),
+      () => undefined
     );
   },
 
