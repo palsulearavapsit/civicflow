@@ -81,9 +81,9 @@ const SECURITY_HEADERS: HeadersInit = {
   'X-DNS-Prefetch-Control': 'off',
 };
 
-// ─── Main Middleware ──────────────────────────────────────────────────────────
+// ─── Main Proxy Layer (formerly Middleware) ───────────────────────────────────
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const origin = req.headers.get('origin');
 
