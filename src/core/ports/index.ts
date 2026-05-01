@@ -39,6 +39,13 @@ export interface IAuditRepository {
   findByUser(uid: string, limitN?: number): Promise<Result<AuditEntry[], DatabaseError>>;
 }
 
+export interface ISessionService {
+  createSession(uid: string): Promise<Result<string, Error>>;
+  revokeSession(sessionId: string): Promise<Result<void, Error>>;
+  revokeAllSessions(uid: string): Promise<Result<void, Error>>;
+  validateSession(sessionId: string): Promise<Result<boolean, Error>>;
+}
+
 export interface StorageService {
   save(key: string, value: any): Promise<void>;
   get(key: string): Promise<any | null>;
