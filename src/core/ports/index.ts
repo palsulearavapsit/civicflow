@@ -8,10 +8,20 @@ export interface AIService {
   streamResponse(prompt: string, history: any[]): AsyncGenerator<string>;
 }
 
-export interface DatabaseService {
+export interface IUserRepository {
   getUser(uid: string): Promise<any>;
   saveUser(uid: string, data: any): Promise<void>;
-  logAudit(userId: string, action: string, metadata: any): Promise<void>;
+}
+
+export interface AuditEntry {
+  userId: string;
+  action: string;
+  metadata: any;
+  timestamp: Date;
+}
+
+export interface IAuditRepository {
+  logAudit(entry: AuditEntry): Promise<void>;
 }
 
 export interface StorageService {
