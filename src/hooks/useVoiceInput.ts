@@ -71,7 +71,7 @@ export function useVoiceInput(onResult: (value: string) => void): UseVoiceInputR
     recognition.onstart = () => { setState('listening'); setError(null); };
     recognition.onend = () => { setState('idle'); };
 
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: any) => {
       setState('processing');
       const results = Array.from(event.results);
       const allTranscripts = results
@@ -103,7 +103,7 @@ export function useVoiceInput(onResult: (value: string) => void): UseVoiceInputR
       }
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: any) => {
       setError(`Voice recognition error: ${event.error}`);
       setState('error');
     };
