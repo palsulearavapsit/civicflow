@@ -56,8 +56,8 @@ export function useVoiceInput(onResult: (value: string) => void): UseVoiceInputR
     }
 
     const SpeechRecognitionCtor =
-      (window as Window & { webkitSpeechRecognition?: typeof SpeechRecognition }).SpeechRecognition ??
-      (window as Window & { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition;
+      (window as any).SpeechRecognition ??
+      (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognitionCtor) return;
 
