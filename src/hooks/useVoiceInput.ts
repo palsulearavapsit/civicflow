@@ -14,8 +14,27 @@ import { useState, useRef, useCallback } from 'react';
 import { FeatureFlagService } from '@/core/feature-flags';
 
 // A11Y-03: Web Speech API types for TypeScript
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+interface SpeechRecognitionResult {
+  readonly length: number;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionResultList {
+  readonly length: number;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionEvent {
+  results: SpeechRecognitionResultList;
+  resultIndex: number;
+}
+
 type SpeechRecognition = any;
-type SpeechRecognitionEvent = any;
 
 type VoiceInputState = 'idle' | 'listening' | 'processing' | 'error';
 
@@ -71,11 +90,11 @@ export function useVoiceInput(onResult: (value: string) => void): UseVoiceInputR
     recognition.onstart = () => { setState('listening'); setError(null); };
     recognition.onend = () => { setState('idle'); };
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       setState('processing');
       const results = Array.from(event.results);
       const allTranscripts = results
-        .flatMap((r) => Array.from(r))
+        .flatMap((r) => Array.from(r as SpeechRecognitionResult))
         .map((alt) => alt.transcript);
 
       for (const text of allTranscripts) {

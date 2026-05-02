@@ -27,10 +27,11 @@ export interface IUserRepository {
 }
 
 export interface AuditEntry {
-  userId: string;
+  uid: string;
   action: string;
   metadata: any;
   timestamp: Date;
+  userAgent?: string;
   signature?: string;
 }
 
@@ -49,4 +50,22 @@ export interface ISessionService {
 export interface StorageService {
   save(key: string, value: any): Promise<void>;
   get(key: string): Promise<any | null>;
+}
+
+export interface ChatMessage {
+  role: 'user' | 'model';
+  content: string;
+}
+
+export interface AIGenerationConfig {
+  temperature?: number;
+  topP?: number;
+  topK?: number;
+  maxOutputTokens?: number;
+  responseMimeType?: string;
+}
+
+export interface SafetySetting {
+  category: string;
+  threshold: string;
 }

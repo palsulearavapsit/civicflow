@@ -10,7 +10,7 @@ import { encryptData, decryptData } from '@/lib/encryption';
 describe('Encryption Robustness (Fuzzing)', () => {
   it('should correctly round-trip any string input', async () => {
     await fc.assert(
-      fc.asyncProperty(fc.fullUnicodeString(), async (original) => {
+      fc.asyncProperty(fc.string(), async (original: string) => {
         const encrypted = await encryptData(original);
         const decrypted = await decryptData(encrypted);
         

@@ -147,7 +147,7 @@ export function createModel(
     systemInstruction: buildSystemInstruction(state),
     tools: [
       {
-        googleSearch: {} 
+        googleSearchRetrieval: {} 
       },
       {
         functionDeclarations: [

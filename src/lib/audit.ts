@@ -7,6 +7,10 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
  */
 export const logAuditEntry = async (userId: string, action: string, metadata: Record<string, any> = {}) => {
   try {
+    if (!db) {
+      console.warn('Audit Log: Database not initialized');
+      return;
+    }
     await addDoc(collection(db, 'audit_vault'), {
       userId,
       action,
