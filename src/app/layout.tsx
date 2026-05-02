@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
+import { headers } from "next/headers";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 import { ThemeProvider } from "@/context/ThemeContext";
@@ -25,11 +26,13 @@ import { CommandPalette } from "@/components/organisms/CommandPalette";
 
 import { SkipLink } from "@/components/atoms/SkipLink";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const nonce = (await headers()).get('x-nonce') || '';
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable} antialiased`}>
