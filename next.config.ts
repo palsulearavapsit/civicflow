@@ -32,12 +32,6 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/_next/static/(.*)',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-        ],
-      },
-      {
         source: '/manifest.json',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=3600' },
@@ -67,35 +61,6 @@ const nextConfig: NextConfig = {
 
   // EFF-18: Cold start optimization — reduce serverless function size
   serverExternalPackages: ['firebase-admin'],
-
-  // EFF-08: Webpack code splitting configuration
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: {
-          ...config.optimization?.splitChunks,
-          cacheGroups: {
-            // Separate chunk for Map libraries (heavy)
-            maps: {
-              test: /[\\/]node_modules[\\/](mapbox-gl|react-map-gl|leaflet|react-leaflet)[\\/]/,
-              name: 'maps',
-              chunks: 'all',
-              priority: 20,
-            },
-            // Separate chunk for AI library
-            ai: {
-              test: /[\\/]node_modules[\\/](@google\/generative-ai)[\\/]/,
-              name: 'ai',
-              chunks: 'all',
-              priority: 20,
-            },
-          },
-        },
-      };
-    }
-    return config;
-  },
 };
 
 export default nextConfig;
