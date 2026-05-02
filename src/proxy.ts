@@ -94,9 +94,10 @@ export function proxy(req: NextRequest) {
   }
 
   // ── CORS origin check for API routes ─────────────────────────────────────
-  if (pathname.startsWith('/api/') && origin && !ALLOWED_ORIGINS.has(origin) && !origin.endsWith('.vercel.app')) {
+  const isVercelInternal = !!req.headers.get('x-vercel-id');
+  if (pathname.startsWith('/api/') && origin && !isVercelInternal && !ALLOWED_ORIGINS.has(origin) && !origin.endsWith('.vercel.app')) {
     return NextResponse.json(
-      { error: 'CORS: Origin not allowed', code: 'CORS_VIOLATION' },
+      { error: `CORS: Origin ${origin} not allowed`, code: 'CORS_VIOLATION' },
       { 
         status: 403, 
         headers: {
@@ -144,18 +145,26 @@ export function proxy(req: NextRequest) {
   }
 
   // SEC-09: CSRF Protection
+  let cookieToken = req.cookies.get('csrf-token')?.value;
+  const csrfTokenHeader = req.headers.get('x-csrf-token');
+
+  // Issue token if missing (crucial for first visit)
+  if (!cookieToken) {
+    cookieToken = crypto.randomUUID();
+  }
+
   if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
-    const csrfToken = req.headers.get('x-csrf-token');
-    const cookieToken = req.cookies.get('csrf-token')?.value;
-    
-    if (process.env.NODE_ENV === 'production' && (!csrfToken || csrfToken !== cookieToken)) {
-      return NextResponse.json(
-        { error: 'CSRF validation failed', code: 'CSRF_VIOLATION' },
-        { 
-          status: 403,
-          headers: { 'X-CivicFlow-Proxy': 'CSRF_BLOCK' }
-        }
-      );
+    // Only enforce in production and skip for internal Vercel requests if any
+    if (process.env.NODE_ENV === 'production' && !isVercelInternal) {
+      if (!csrfTokenHeader || csrfTokenHeader !== cookieToken) {
+        return NextResponse.json(
+          { error: 'CSRF validation failed: Token mismatch or missing', code: 'CSRF_VIOLATION' },
+          { 
+            status: 403,
+            headers: { 'X-CivicFlow-Proxy': 'CSRF_BLOCK' }
+          }
+        );
+      }
     }
   }
 
@@ -190,9 +199,17 @@ export function proxy(req: NextRequest) {
   response.cookies.set('x-user-geo', `${country}-${region}`, { path: '/', maxAge: 3600 });
 
   response.headers.set('Content-Security-Policy', cspHeader);
-  response.headers.set('X-Nonce', nonce); // For use in server components
+  response.headers.set('X-Nonce', nonce);
   response.headers.set('X-RateLimit-Limit', String(maxReqs));
   response.headers.set('X-RateLimit-Remaining', String(remaining));
+  
+  // SEC-09: Sync CSRF token to cookie
+  response.cookies.set('csrf-token', cookieToken, {
+    path: '/',
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax', // Use 'lax' for better compatibility with OAuth/Redirects
+  });
 
   return response;
 }
