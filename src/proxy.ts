@@ -18,6 +18,7 @@ const ALLOWED_ORIGINS = new Set([
   process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
   'https://civicflow.vercel.app',
   'https://civicflow.app',
+  'https://civicflow-ntrd.vercel.app',
 ]);
 
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
@@ -57,11 +58,11 @@ function checkRateLimit(key: string, maxRequests: number): { allowed: boolean; r
 // ─── CORS Handling ────────────────────────────────────────────────────────────
 
 function getCorsHeaders(origin: string | null): HeadersInit {
-  const isAllowed = origin && ALLOWED_ORIGINS.has(origin);
+  const isAllowed = !origin || ALLOWED_ORIGINS.has(origin) || origin.endsWith('.vercel.app');
   return {
     'Access-Control-Allow-Origin': isAllowed ? origin! : (ALLOWED_ORIGINS.values().next().value ?? ''),
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Signature, X-Timestamp',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Signature, X-Timestamp, X-CSRF-Token',
     'Access-Control-Allow-Credentials': 'true',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin',
@@ -93,10 +94,16 @@ export function proxy(req: NextRequest) {
   }
 
   // ── CORS origin check for API routes ─────────────────────────────────────
-  if (pathname.startsWith('/api/') && origin && !ALLOWED_ORIGINS.has(origin)) {
+  if (pathname.startsWith('/api/') && origin && !ALLOWED_ORIGINS.has(origin) && !origin.endsWith('.vercel.app')) {
     return NextResponse.json(
       { error: 'CORS: Origin not allowed', code: 'CORS_VIOLATION' },
-      { status: 403, headers: getCorsHeaders(origin) }
+      { 
+        status: 403, 
+        headers: {
+          ...getCorsHeaders(origin),
+          'X-CivicFlow-Proxy': 'CORS_BLOCK'
+        }
+      }
     );
   }
 
@@ -144,7 +151,10 @@ export function proxy(req: NextRequest) {
     if (process.env.NODE_ENV === 'production' && (!csrfToken || csrfToken !== cookieToken)) {
       return NextResponse.json(
         { error: 'CSRF validation failed', code: 'CSRF_VIOLATION' },
-        { status: 403 }
+        { 
+          status: 403,
+          headers: { 'X-CivicFlow-Proxy': 'CSRF_BLOCK' }
+        }
       );
     }
   }
